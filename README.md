@@ -24,14 +24,15 @@ Steps to install K8S on Rocky Linux
         192.168.1.3 wn1
         192.168.1.4 wn2
 8. Ports used by master 
-        Protocol  Direction Port Range  Purpose Used By
-        -----------------------------------------------
+        |Protocol|  Direction Port Range | Purpose Used By|
+	|--------|-----------------------|----------------|
         TCP       Inbound   6443        Kubernetes API server All
         TCP       Inbound   2379-2380   etcd server client API  kube-apiserver, etcd
         TCP       Inbound   10250       Kubelet API Self, Control plane
         TCP       Inbound   10259       kube-scheduler  Self
         TCP       Inbound   10257       kube-controller-manager Self
 9. Allowing these ports on master
+```
         sudo firewall-cmd --add-port=6443/tcp --permanent
         sudo firewall-cmd --add-port=2379-2380/tcp --permanent
         sudo firewall-cmd --add-port=10250/tcp --permanent
@@ -39,19 +40,24 @@ Steps to install K8S on Rocky Linux
         sudo firewall-cmd --add-port=10257/tcp --permanent
         sudo firewall-cmd --reload
         sudo firewall-cmd --list-all
+```
 10. Kubelet and node sevice uses these ports
+```
         Protocol  Direction Port Range  Purpose Used By
-        --------------------------------------------------
         TCP       Inbound   10250       Kubelet API Self, Control plane
         TCP       Inbound   30000-32767 NodePort Services†  All
+```
 11. Allowing these ports on wn1 and wn2
-        sudo firewall-cmd --add-port=10250/tcp --permanent
+```
+	sudo firewall-cmd --add-port=10250/tcp --permanent
         sudo firewall-cmd --add-port=30000-32767/tcp --permanent
 
         sudo firewall-cmd --reload
         sudo firewall-cmd --list-all
+```
 12. Kubernetes required the kernel modules "overlay" and "br_netfilter" to be enabled on all servers. ON MASTER
-        sudo modprobe overlay
+```
+	sudo modprobe overlay
         sudo modprobe br_netfilter
         cat <<EOF | sudo tee /etc/modules-load.d/k8s.conf
         overlay
@@ -63,4 +69,4 @@ Steps to install K8S on Rocky Linux
         net.ipv4.ip_forward                 = 1
         EOF
         sudo sysctl --system
-
+```
