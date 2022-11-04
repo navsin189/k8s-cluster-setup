@@ -5,6 +5,7 @@ kubernetes master worker node setup on redhat linux
 Date -- November 4, 2022
 Steps to install K8S on Rocky Linux
 1. add k8s repo
+```
         [kubernetes]
         name=Kubernetes
         baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-$basearch
@@ -13,16 +14,18 @@ Steps to install K8S on Rocky Linux
         repo_gpgcheck=1
         gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
         exclude=kubelet kubeadm kubectl
-
-2. disable swap --> edit /etc/fstab --> sudo swapoff -a
-3. sudo setenforce 0
-4. sudo sed -i 's/^SELINUX=enforcing$/SELINUX=permissive/' /etc/selinux/config
+```
+2. disable swap --> edit `/etc/fstab` --> `sudo swapoff -a`
+3. sudo `setenforce 0`
+4. sudo `sed -i 's/^SELINUX=enforcing$/SELINUX=permissive/' /etc/selinux/config`
 5. sestatus
 6. Cloned the machine to launch 2 worker nodes
 7. edit /etc/hosts -->
+```
 	192.168.1.6 kube-master
         192.168.1.3 wn1
         192.168.1.4 wn2
+```
 8. Ports used by master 
         |Protocol|  Direction Port Range | Purpose Used By|
 	|--------|-----------------------|----------------|
