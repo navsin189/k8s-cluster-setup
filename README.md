@@ -1,6 +1,7 @@
 # k8s-cluster-setup
 kubernetes master worker node setup on redhat linux
-
+[Demo](https://drive.google.com/drive/folders/1rbvoELKErRhjr8c2eF71ERsMCNGYRnUD?usp=sharing)
+[Blog](https://sunnykkc13.medium.com/kubernetes-setup-489ecb64a896)
 
 Date -- November 4, 2022
 Steps to install K8S on Rocky Linux
