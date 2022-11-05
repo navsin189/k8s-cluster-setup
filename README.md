@@ -34,28 +34,21 @@ net.ipv4.ip_forward                 = 1
 EOF
 sudo sysctl --system
 ```
-7. Install containerd.io
+7. Install docker
 ```
 sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
-sudo dnf install containerd.io
-sudo mv /etc/containerd/config.toml /etc/containerd/config.toml.orig
-sudo containerd config default > /etc/containerd/config.toml
+sudo dnf install docker-ce
+sudo systemctl start docker && sudo systemctl restart docker
 ```
 ---
 ```
 sudo nano /etc/containerd/config.toml
-# Change the value of cgroup driver "SystemdCgroup = false" to "SystemdCgroup = true".
-#This will enable the systemd cgroup driver for the containerd container runtime.
-
-[plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc]
-  ...
-  [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options]
-    SystemdCgroup = true    
+# remove cri from disabled_plugins
 ```
 ---
 ```
-sudo systemctl enable --now containerd
-sudo systemctl status containerd
+sudo systemctl restart containerd
+#sudo systemctl status containerd
 ```
 8. Install kubernetes components
 ```
@@ -100,4 +93,32 @@ sudo firewall-cmd --add-port=30000-32767/tcp --permanent
 sudo firewall-cmd --reload
 sudo firewall-cmd --list-all
 ```
-
+15. Pull the images of master components
+```
+sudo kubeadm config images pull
+```
+16. on masternode add kubeadm-config.yaml
+```
+#kubeadm-config.yaml
+kind: ClusterConfiguration
+apiVersion: kubeadm.k8s.io/v1beta3
+kubernetesVersion: v1.25.3
+---
+kind: KubeletConfiguration
+apiVersion: kubelet.config.k8s.io/v1beta1
+cgroupDriver: systemd
+```
+17. initialise the cluster using kubeadm
+```
+sudo kubeadm init --config kubeadm-config.yaml
+```
+18. If successfully initialised then run
+```
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+```
+19. To join the cluster, on worker node run
+```
+sudo kubeadm join 192.168.1.16:6443 --token <your_generated_token>         --discovery-token-ca-cert-hash <your_generated_certs>
+```
